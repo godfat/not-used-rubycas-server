@@ -84,7 +84,7 @@ module CASServer::CAS
     https.start do |conn|
       path = uri.path.empty? ? '/' : uri.path
       path += '?' + uri.query unless (uri.query.nil? || uri.query.empty?)
-      
+
       pgt = ProxyGrantingTicket.new
       pgt.ticket = "PGT-" + CASServer::Utils.random_string(60)
       pgt.iou = "PGTIOU-" + CASServer::Utils.random_string(57)
@@ -99,7 +99,7 @@ module CASServer::CAS
       response = conn.request_get(path)
       # TODO: follow redirects... 2.5.4 says that redirects MAY be followed
       # NOTE: The following response codes are valid according to the JA-SIG implementation even without following redirects
-      
+
       if %w(200 202 301 302 304).include?(response.code)
         # 3.4 (proxy-granting ticket IOU)
         pgt.save!

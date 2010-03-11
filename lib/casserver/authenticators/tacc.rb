@@ -1,6 +1,6 @@
 require 'casserver/authenticators/base'
 require 'activeresource'
-  
+
 require 'openssl'
 require 'digest/sha2'
 require 'base64'
@@ -29,7 +29,7 @@ end
 class TaccUser < ActiveResource::Base
   self.collection_name = 'users'
   self.timeout = 5
-  
+
   def self.find_by_email(email)
     if u = self.find(:all, :params => { :email => email }).first
       return self.find(u.id)
@@ -37,7 +37,7 @@ class TaccUser < ActiveResource::Base
       return nil
     end
   end
-  
+
   def authenticate(password)
     begin
       return true if self.put(:authenticate, :password => TaccEncryption.encrypt(password))
@@ -45,23 +45,23 @@ class TaccUser < ActiveResource::Base
       return false
     end
   end
-  
+
 end
 
 class CASServer::Authenticators::Tacc < CASServer::Authenticators::Base
 
   def validate(credentials)
     raise CASServer::AuthenticatorError, "Cannot validate credentials because the authenticator hasn't been configured" unless @options
-    
+
     TaccUser.site = @options[:site]
-    
+
     read_standard_credentials(credentials) # Sets @username and @password
-    
+
     @user = TaccUser.find_by_email(@username)
     raise CASServer::AuthenticatorError, "User not found" if @user.nil?
-    
+
     return @user.authenticate(@password)
-    
+
   end
 end
 

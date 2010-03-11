@@ -81,14 +81,14 @@ class CASServer::Authenticators::SQL < CASServer::Authenticators::Base
 
     username_column = @options[:username_column] || 'username'
     password_column = @options[:password_column] || 'password'
-    
+
     $LOG.debug "#{self.class}: [#{user_model}] " + "Connection pool size: #{user_model.connection_pool.instance_variable_get(:@checked_out).length}/#{user_model.connection_pool.instance_variable_get(:@connections).length}"
     results = user_model.find(:all, :conditions => ["#{username_column} = ? AND #{password_column} = ?", @username, @password])
     user_model.connection_pool.checkin(user_model.connection)
-       
+
     if results.size > 0
       $LOG.warn("#{self.class}: Multiple matches found for user #{@username.inspect}") if results.size > 1
-      
+
       unless @options[:extra_attributes].blank?
         if results.size > 1
           $LOG.warn("#{self.class}: Unable to extract extra_attributes because multiple matches were found for #{@username.inspect}")
