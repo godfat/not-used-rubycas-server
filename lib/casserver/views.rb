@@ -243,4 +243,8 @@ end
 
 if $CONF.custom_views_file
   require $CONF.custom_views_file
+
+elsif $CONF.template_erb_dir
+  require 'casserver/erb'
+
 end
